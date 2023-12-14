@@ -59,6 +59,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+// display employee specific by id
 func Show(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	nId := r.URL.Query().Get("id")
@@ -153,7 +154,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 	delForm.Exec(emp)
-	log.Println("DELETE")
+	log.Println("DELETE id => ", emp)
 	defer db.Close()
 	http.Redirect(w, r, "/", 301)
 }
