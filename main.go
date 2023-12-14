@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -81,8 +82,9 @@ func Show(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
-func New(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "New", nil)
+// send adding page
+func AddPage(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "AddPage", nil)
 }
 
 func Edit(w http.ResponseWriter, r *http.Request) {
@@ -111,8 +113,10 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 func Insert(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
+
 		name := r.FormValue("name")
 		city := r.FormValue("city")
+
 		insForm, err := db.Prepare("INSERT INTO Employee(name, city) VALUES(?,?)")
 		if err != nil {
 			panic(err.Error())
@@ -155,13 +159,14 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	log.Println("Server started on: http://localhost:8080")
+	var port int = 8090
+	log.Println("Server started on: http://localhost:", port)
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/show", Show)
-	http.HandleFunc("/new", New)
+	http.HandleFunc("/new", AddPage)
 	http.HandleFunc("/edit", Edit)
 	http.HandleFunc("/insert", Insert)
 	http.HandleFunc("/update", Update)
 	http.HandleFunc("/delete", Delete)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
