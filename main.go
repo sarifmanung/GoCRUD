@@ -15,6 +15,7 @@ type Employee struct {
 	City string
 }
 
+// connect to database (mysql,user,pass,dbName)
 func dbConn() (db *sql.DB) {
 	dbDriver := "mysql"
 	dbUser := "root"
@@ -29,6 +30,7 @@ func dbConn() (db *sql.DB) {
 
 var tmpl = template.Must(template.ParseGlob("form/*"))
 
+// w for response , r for request
 func Index(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	selDB, err := db.Query("SELECT * FROM Employee ORDER BY id DESC")
@@ -38,8 +40,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	emp := Employee{}
 	res := []Employee{}
 	for selDB.Next() {
+
+		// get all value
 		var id int
 		var name, city string
+
 		err = selDB.Scan(&id, &name, &city)
 		if err != nil {
 			panic(err.Error())
@@ -47,7 +52,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		emp.Id = id
 		emp.Name = name
 		emp.City = city
-		res = append(res, emp)
+		res = append(res, emp) // append to res(slice)
 	}
 	tmpl.ExecuteTemplate(w, "Index", res)
 	defer db.Close()
