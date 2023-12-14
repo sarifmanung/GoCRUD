@@ -132,9 +132,11 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 func Update(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
+
 		name := r.FormValue("name")
 		city := r.FormValue("city")
 		id := r.FormValue("uid")
+
 		insForm, err := db.Prepare("UPDATE Employee SET name=?, city=? WHERE id=?")
 		if err != nil {
 			panic(err.Error())
